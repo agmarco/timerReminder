@@ -1,10 +1,10 @@
 {
   "name": "tmrrmdr",
   "version": "1.0.0",
-  "description": "An Electron application with React and TypeScript",
+  "description": "Timer Reminder - A simple timer application with interval reminders",
   "main": "./out/main/index.js",
-  "author": "example.com",
-  "homepage": "https://electron-vite.org",
+  "author": "Marco Aguirre",
+  "homepage": "https://github.com/yourusername/tmrrmdr",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",

@@ -2,6 +2,21 @@ import { Box, HStack, Text, IconButton } from '@chakra-ui/react'
 import { LuPause, LuPlay, LuTrash2 } from 'react-icons/lu'
 import React from 'react'
 
+// Array of visually distinct colors that work well on dark background
+const TIMER_COLORS = [
+  'blue.500',
+  'green.500',
+  'purple.500',
+  'pink.500',
+  'cyan.500',
+  'yellow.500',
+  'orange.500',
+  'teal.500',
+  'red.500',
+  'indigo.500',
+  'purple.500'
+]
+
 interface TimerProps {
   maxTime: number // in seconds
   interval: number // in seconds
@@ -23,7 +38,11 @@ export function Timer({
   const [isFlashing, setIsFlashing] = React.useState(false)
   const lastIntervalHit = React.useRef(maxTime)
   const startTimeRef = React.useRef<number | null>(null)
-  const animationFrameRef = React.useRef<number>()
+  const animationFrameRef = React.useRef<number | undefined>(undefined)
+  // Generate a random color when the timer is created
+  const [timerColor] = React.useState(
+    () => TIMER_COLORS[Math.floor(Math.random() * TIMER_COLORS.length)]
+  )
 
   React.useEffect(() => {
     if (isRunning) {
@@ -70,7 +89,8 @@ export function Timer({
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
   }
 
-  const progress = (timeLeft / maxTime) * 100
+  // Calculate progress within the current interval (filling up)
+  const currentIntervalProgress = 100 - ((timeLeft % interval) / interval) * 100
 
   return (
     <Box
@@ -78,7 +98,7 @@ export function Timer({
       p={4}
       borderBottom="1px"
       borderColor="white"
-      bg={isFlashing ? 'orange.900' : 'transparent'}
+      bg={isFlashing ? timerColor : 'transparent'}
       transition="background-color 0.3s ease"
     >
       <HStack justify="space-between" align="center" w="100%">
@@ -116,8 +136,8 @@ export function Timer({
       <Box mt={2} h="4px" w="100%" bg="gray.700" borderRadius="full" overflow="hidden">
         <Box
           h="100%"
-          w={`${progress}%`}
-          bg={timeLeft > 0 ? 'blue.500' : 'green.500'}
+          w={`${currentIntervalProgress}%`}
+          bg={timeLeft > 0 ? timerColor : 'green.500'}
           transition="width 0.4s ease"
         />
       </Box>

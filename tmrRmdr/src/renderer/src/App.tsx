@@ -1,6 +1,6 @@
 import { HStack, IconButton, Box, VStack, Text, Input } from '@chakra-ui/react'
 import { IoIosAdd } from 'react-icons/io'
-import { LuSettings, LuPlay, LuRotateCcw } from 'react-icons/lu'
+import { LuSettings, LuPlay, LuPause, LuRotateCcw } from 'react-icons/lu'
 import React from 'react'
 import { Timer } from './components/Timer'
 
@@ -45,10 +45,15 @@ export default function App(): React.ReactElement {
     setNewTimerInterval('60')
   }
 
-  const startAllTimers = (): void => {
-    // Create a new Set with all timer IDs in a single operation
-    const allTimerIds = new Set(timers.map((timer) => timer.id))
-    setRunningTimers(allTimerIds)
+  const toggleAllTimers = (): void => {
+    if (runningTimers.size === timers.length) {
+      // If all timers are running, pause them all
+      setRunningTimers(new Set())
+    } else {
+      // Otherwise, start all timers
+      const allTimerIds = new Set(timers.map((timer) => timer.id))
+      setRunningTimers(allTimerIds)
+    }
   }
 
   const resetAllTimers = (): void => {
@@ -74,6 +79,8 @@ export default function App(): React.ReactElement {
       return newSet
     })
   }
+
+  const areAllTimersRunning = runningTimers.size === timers.length
 
   return (
     <Box
@@ -139,14 +146,14 @@ export default function App(): React.ReactElement {
               <IoIosAdd />
             </IconButton>
             <IconButton
-              aria-label="Start all timers"
+              aria-label={areAllTimersRunning ? 'Pause all timers' : 'Start all timers'}
               colorScheme="green"
               size="sm"
-              onClick={startAllTimers}
+              onClick={toggleAllTimers}
               alignSelf="flex-end"
               disabled={timers.length === 0}
             >
-              <LuPlay />
+              {areAllTimersRunning ? <LuPause /> : <LuPlay />}
             </IconButton>
             <IconButton
               aria-label="Reset all timers"
