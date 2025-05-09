@@ -1,6 +1,6 @@
 import { HStack, IconButton, Box, VStack, Text, Input } from '@chakra-ui/react'
 import { IoIosAdd } from 'react-icons/io'
-import { LuSettings, LuPlay } from 'react-icons/lu'
+import { LuSettings, LuPlay, LuRotateCcw } from 'react-icons/lu'
 import React from 'react'
 import { Timer } from './components/Timer'
 
@@ -12,7 +12,20 @@ interface TimerData {
 }
 
 export default function App(): React.ReactElement {
-  const [timers, setTimers] = React.useState<TimerData[]>([])
+  const [timers, setTimers] = React.useState<TimerData[]>([
+    {
+      id: 'creep-timer',
+      name: 'Creep',
+      maxTime: 3600,
+      interval: 11
+    },
+    {
+      id: 'inject-timer',
+      name: 'Inject',
+      maxTime: 3600,
+      interval: 29
+    }
+  ])
   const [newTimerName, setNewTimerName] = React.useState('')
   const [newTimerMaxTime, setNewTimerMaxTime] = React.useState('3600')
   const [newTimerInterval, setNewTimerInterval] = React.useState('60')
@@ -36,6 +49,18 @@ export default function App(): React.ReactElement {
     // Create a new Set with all timer IDs in a single operation
     const allTimerIds = new Set(timers.map((timer) => timer.id))
     setRunningTimers(allTimerIds)
+  }
+
+  const resetAllTimers = (): void => {
+    // Stop all timers
+    setRunningTimers(new Set())
+    // Force a re-render of all timers by updating their IDs
+    setTimers((prevTimers) =>
+      prevTimers.map((timer) => ({
+        ...timer,
+        id: Date.now().toString() + Math.random()
+      }))
+    )
   }
 
   const handleTimerStateChange = (timerId: string, isRunning: boolean): void => {
@@ -122,6 +147,16 @@ export default function App(): React.ReactElement {
               disabled={timers.length === 0}
             >
               <LuPlay />
+            </IconButton>
+            <IconButton
+              aria-label="Reset all timers"
+              colorScheme="yellow"
+              size="sm"
+              onClick={resetAllTimers}
+              alignSelf="flex-end"
+              disabled={timers.length === 0}
+            >
+              <LuRotateCcw />
             </IconButton>
           </HStack>
         </HStack>
